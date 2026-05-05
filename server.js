@@ -67,3 +67,6 @@ app.get('/api/check-status', async (req, res) => {
 });
 
 app.listen(3000, () => console.log('API Sentral berjalan...'));
+
+// TAMBAHKAN BARIS INI UNTUK VERCEL
+module.exports = app;
