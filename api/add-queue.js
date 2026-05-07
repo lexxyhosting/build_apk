@@ -10,7 +10,8 @@ export default async function handler(req, res) {
 
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method Not Allowed' });
 
-    const { botToken, authKey, zipUrl, userId, chatId, mode } = req.body;
+    // Tangkap isPremium dari bot
+    const { botToken, authKey, zipUrl, userId, chatId, mode, isPremium } = req.body;
 
     const { data, error } = await supabase
       .from('build_queue')
@@ -21,6 +22,7 @@ export default async function handler(req, res) {
         user_id: userId, 
         chat_id: chatId, 
         mode: mode, 
+        is_premium: isPremium || false, // Masukkan status VIP ke database
         status: 'pending' 
       }]);
 
