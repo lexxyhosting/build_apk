@@ -1,23 +1,27 @@
-const { createClient } = require('@supabase/supabase-js');
+import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
-
-module.exports = async function handler(req, res) {
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method Not Allowed' });
-
-  const { botToken, authKey, zipUrl, userId, chatId, mode } = req.body;
-
+export default async function handler(req, res) {
   try {
+    if (!process.env.SUPABASE_URL || !process.env.SUPABASE_KEY) {
+       return res.status(500).json({ error: "GAGAL: Kunci Supabase belum terbaca." });
+    }
+    
+    const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
+
+    if (req.method !== 'POST') return res.status(405).json({ error: 'Method Not Allowed' });
+
+    const { botToken, authKey, zipUrl, userId, chatId, mode } = req.body;
+
     const { data, error } = await supabase
       .from('build_queue')
       .insert([{ 
         bot_token: botToken, 
-        auth_key: authKey, // Disinkronkan dengan server.js pusat
+        auth_key: authKey,
         zip_url: zipUrl, 
         user_id: userId, 
         chat_id: chatId, 
         mode: mode, 
-        status: 'pending' // Status awal harus pending agar dibaca server pusat
+        status: 'pending' 
       }]);
 
     if (error) throw error;
